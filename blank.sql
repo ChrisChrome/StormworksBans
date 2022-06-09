@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS bans (
+	id NUMERIC NOT NULL,
+	username TEXT NOT NULL,
+	"mod" TEXT NOT NULL,
+	reason TEXT DEFAULT 'None Given',
+	CONSTRAINT bans_PK PRIMARY KEY (id)
+);
