@@ -11,16 +11,26 @@ app.get("/check", async (req,res) => {
 	db.all("SELECT * FROM bans WHERE id = ?", req.query.id, (err, rows) => {
 		if(err) return res.sendStatus(500).end();
 		if(rows[0]) {
-			res.status(200).send(true).end();
+			data = {
+				id: req.query.id,
+				ban: true
+			}
+			res.status(200).send(data).end();
 		} else {
-			res.status(200).send(false).end();
+			data = {
+				id: req.query.id,
+				ban: false,
+				data: rows[0]
+			}
+			res.status(200).send(data).end();
 		}
 	});
 })
 app.get("/ban", async (req,res) => {
 	if(!req.query.auth) return res.sendStatus(400).end();
 	if(req.query.auth !== config.security) return res.sendStatus(401).end();
-	db.run("INSERT INTO bans VALUES (?,?,?,?)", req.query.id, req.query.username, req.query.mod, req.query.reason?req.query.reason:"None Given", (err, row) => {
+	data = JSON.parse(req.query.data)
+	db.run("INSERT INTO bans VALUES (?,?,?,?)", data.id, data.username, data.mod, data.reason?data.reason:"None Given", (err, row) => {
 		if(err) {
 			return res.status(500).send(err).end();
 		}
