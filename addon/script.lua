@@ -49,7 +49,7 @@ if command == "?b" then
 				local s = ""
 				if args[2] then
 					for i=2,#args do
-						s = s..args[i]
+						s = s.." "..args[i]
 					end
 				end
 				data["reason"] = s
