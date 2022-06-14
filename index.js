@@ -111,7 +111,7 @@ bot.once("ready", async () => {
 		new SlashCommandBuilder()
 		.setName('ban')
 		.setDescription('Ban a steam ID from the Stormworks server(s)')
-		.addIntegerOption((option) =>
+		.addStringOption((option) =>
 			option.setName("steam64").setDescription("The steam ID to ban").setRequired(true)
 		)
 		.addStringOption((option) =>
@@ -121,7 +121,7 @@ bot.once("ready", async () => {
 		new SlashCommandBuilder()
 		.setName('unban')
 		.setDescription('Unban a steam ID from the Stormworks server(s)')
-		.addIntegerOption((option) =>
+		.addStringOption((option) =>
 			option.setName("steam64").setDescription("The steam ID to unban").setRequired(true)
 		)
 		.setDefaultMemberPermissions(4)
@@ -143,7 +143,7 @@ bot.on("interactionCreate", async (interaction) => {
 	switch (interaction.commandName) {
 		case "ban":
 			let reason = interaction.options.getString('reason')
-			db.run("INSERT INTO bans VALUES (?,?,?,?)", interaction.options.getInteger("steam64"), "Unknown", interaction.user.username, reason ? reason : "None Given", (err, row) => {
+			db.run("INSERT INTO bans VALUES (?,?,?,?)", interaction.options.getString("steam64"), "Unknown", interaction.user.username, reason ? reason : "None Given", (err, row) => {
 				if (err) {
 					interaction.editReply({
 						ephemeral: true
@@ -166,7 +166,7 @@ bot.on("interactionCreate", async (interaction) => {
 							},
 							{
 								name: "Steam ID",
-								value: interaction.options.getInteger("steam64").toString(),
+								value: interaction.options.getString("steam64").toString(),
 								inline: true
 							},
 							{
@@ -179,15 +179,15 @@ bot.on("interactionCreate", async (interaction) => {
 				})
 				interaction.reply({
 					ephemeral: true,
-					content: `Banned ${interaction.options.getInteger("steam64")}`
+					content: `Banned ${interaction.options.getString("steam64")}`
 				})
 			})
 			break;
 		case "unban":
-			db.run("DELETE FROM bans WHERE id = ?", interaction.options.getInteger("steam64"), (err, row) => {
+			db.run("DELETE FROM bans WHERE id = ?", interaction.options.getString("steam64"), (err, row) => {
 				if (err) return interaction.reply({
 					ephemeral: true,
-					content: `Failed to unban ${interaction.options.getInteger("steam64")}`
+					content: `Failed to unban ${interaction.options.getString("steam64")}`
 				})
 				hook.send({
 					embeds: [{
@@ -196,14 +196,14 @@ bot.on("interactionCreate", async (interaction) => {
 						color: 65280,
 						fields: [{
 							name: "Steam ID",
-							value: interaction.options.getInteger("steam64").toString(),
+							value: interaction.options.getString("steam64").toString(),
 							inline: true
 						}]
 					}]
 				})
 				interaction.reply({
 					ephemeral: true,
-					content: `Unbanned ${interaction.options.getInteger("steam64")}`
+					content: `Unbanned ${interaction.options.getString("steam64")}`
 				})
 			})
 			break;
